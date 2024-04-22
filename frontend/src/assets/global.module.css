@@ -1,0 +1,10 @@
+.bgSlate {
+  background-color: #708090 !important; /* Slate Gray */
+}
+
+.Slate {
+  background-color: rgb(203 213 225) !important; /* Slate Gray */
+}
+.main {
+  min-height: 87vh;
+}
