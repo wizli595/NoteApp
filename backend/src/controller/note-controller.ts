@@ -3,10 +3,16 @@ import { PrismaClient } from "@prisma/client";
 import { OperationalError } from "../utils/errors/operationalError";
 
 const prisma = new PrismaClient();
+/**
+ * @description get All Notes
+ * @route GET /api/notes
+ * @access Public
+ * @param req 
+ * @param res 
+ * @param next 
+ * 
+ */
 
-// @desc   get all notes
-// @route  GET /api/notes
-// @access Public
 const getNotes: RequestHandler = async (req, res, next) => {
   try {
     const notes = await prisma.note.findMany();
@@ -16,10 +22,15 @@ const getNotes: RequestHandler = async (req, res, next) => {
     next(new OperationalError("Failed to retrieve notes " + message, 402));
   }
 };
+/**
+ * @desc   get note By ID
+ * @route  GET /api/notes
+ * @access Public
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 
-// @desc   get note By ID
-// @route  GET /api/notes
-// @access Public
 const getNoteById: RequestHandler = async (req, res, next) => {
   const { id: noteID } = req.params;
   try {
@@ -33,9 +44,17 @@ const getNoteById: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc   Create note
-// @route  POST /api/notes
-// @access Private
+
+
+/**
+ * @desc   Create note
+ * @route  POST /api/notes 
+ * @access Private
+ * @param req 
+ * @param res 
+ * @param next 
+ */
+
 const createNote: RequestHandler = async (req, res, next) => {
   const { title, text } = req.body;
   try {
@@ -49,9 +68,15 @@ const createNote: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc   Create note
-// @route  PUT /api/notes/:id
-// @access Private
+/**
+ * @desc   Create note
+ * @route  PUT /api/notes/:id
+ * @access Private
+ * @param req 
+ * @param res 
+ * @param next 
+ */
+
 const updateNote: RequestHandler = async (req, res, next) => {
   const { id: noteID } = req.params;
   const { title, text } = req.body;
@@ -67,9 +92,15 @@ const updateNote: RequestHandler = async (req, res, next) => {
   }
 };
 
-// @desc   Create note
-// @route  PUT /api/notes/:id
-// @access Private
+/**
+ * @desc   Create note
+ * @route  PUT /api/notes/:id
+ * @access Private
+ * @param req 
+ * @param res 
+ * @param next 
+ */
+
 const deleteNote: RequestHandler = async (req, res, next) => {
   const { id: noteID } = req.params;
   try {
@@ -82,4 +113,11 @@ const deleteNote: RequestHandler = async (req, res, next) => {
     next(new OperationalError("Failed to Delete Note " + message, 400));
   }
 };
-export { getNotes, getNoteById, createNote, updateNote, deleteNote };
+
+export {
+   getNotes,
+   getNoteById,
+   createNote,
+   updateNote,
+   deleteNote
+};
