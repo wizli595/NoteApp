@@ -1,8 +1,8 @@
 import { PrismaClient, User } from "@prisma/client";
 
 import colors from "colors";
-import users from "../data/users";
-import notes from "../data/notes";
+import users from "../../data/users";
+import notes from "../../data/notes";
 const prisma = new PrismaClient();
 
 async function main() {

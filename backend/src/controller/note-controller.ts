@@ -23,7 +23,9 @@ const getNotes: RequestHandler = async (req, res, next) => {
 const getNoteById: RequestHandler = async (req, res, next) => {
   const { id: noteID } = req.params;
   try {
-    const noteById = await prisma.note.findMany({ where: { id: noteID } });
+    const noteById = await prisma.note.findUniqueOrThrow({
+      where: { id: noteID },
+    });
     res.status(200).send(noteById);
   } catch (error) {
     const message = error instanceof Error ? error.message : " ";

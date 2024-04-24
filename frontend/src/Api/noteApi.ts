@@ -6,6 +6,7 @@ import { Note } from "@prisma/client";
  * @endpoint  /api/notes
  * @return Promise<Note[]>
  */
+
 const getAllNotes = async (): Promise<Note[]> => {
   try {
     const response = await axios.get<Note[]>("/api/notes");
@@ -20,11 +21,12 @@ const getAllNotes = async (): Promise<Note[]> => {
 /**
  * @description Get Note By Id
  * @endpoint /api/notes/:id
+ * @requires id
  * @return Promise<Note>
  */
 const getNoteById = async (id: string): Promise<Note> => {
   try {
-    const response = await axios.get<Note>("/api/notes" + id);
+    const response = await axios.get<Note>("/api/notes/" + id);
     const note = response.data;
     return note;
   } catch (err) {

@@ -9,4 +9,5 @@ export default cleanEnv(process.env, {
   PORT: port(),
   NODE_ENV: str(),
   FRONT_END_URL: str(),
+  JWT_KEY: str(),
 });
