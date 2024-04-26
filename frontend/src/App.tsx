@@ -1,25 +1,19 @@
-import { Outlet } from "@tanstack/react-router";
-import Header from "./components/Header";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import styles from "./assets/global.module.css";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Footer from "./components/Footer";
-import { Container } from "react-bootstrap";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen.ts";
+import { useAuth } from "./hooks/useAuth.ts";
+
+const router = createRouter({routeTree,context:{authentication:undefined!}})
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 function App() {
+  const authentication = useAuth()
   return (
     <>
-      <ToastContainer />
-      <Header />
-      <main className={"py-3 " + styles.main}>
-        <Container>
-          <Outlet />
-        </Container>
-      </main>
-      <Footer />
-      <ReactQueryDevtools />
-      <TanStackRouterDevtools />
+      <RouterProvider router={router} context={{authentication}}/>
     </>
   );
 }

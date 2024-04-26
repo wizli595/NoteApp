@@ -1,12 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import styles from "../assets/global.module.css";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
-  const queryClient = useQueryClient();
-  console.log(queryClient.getQueryData(["user"]));
+  const {isLogged,user}=useAuth();
   return (
     <header className={styles.bgSlate}>
       <Navbar variant="dark" expand="md" collapseOnSelect>
@@ -19,9 +18,14 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-nav" />
           <Navbar.Collapse id="basic-nav">
             <Nav className="ms-auto">
-              <Nav.Link as={Link} to={"/login"}>
-                <FaUser /> Sign In
-              </Nav.Link>
+            {isLogged() ? (<NavDropdown title={user?.username} id="username">
+                                    <NavDropdown.Item as={Link} to={"/profile"}>Profile</NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <Nav.Link as={Link} to={'/login'}>
+                                    <FaUser /> Sign In
+                                </Nav.Link>
+                            )}
             </Nav>
           </Navbar.Collapse>
         </Container>

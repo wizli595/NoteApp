@@ -23,8 +23,9 @@ const LoginPage = () => {
     mutationFn: login,
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data);
+      localStorage.setItem("user",JSON.stringify(data));
       toast.success("Logged in successfully!!");
-      navigate({ to: "/" });
+      navigate({ to: "/profile" });
     },
     onError: (err: unknown) => {
       if (axios.isAxiosError(err)) {

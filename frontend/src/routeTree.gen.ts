@@ -12,13 +12,20 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as NoteNoteIdImport } from './routes/note/$noteId'
+import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
 
 // Create/Update Routes
 
 const LoginRoute = LoginImport.update({
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +39,11 @@ const NoteNoteIdRoute = NoteNoteIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -40,9 +52,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated': {
+      preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/profile': {
+      preLoaderRoute: typeof AuthenticatedProfileImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/note/$noteId': {
       preLoaderRoute: typeof NoteNoteIdImport
@@ -55,6 +75,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
+  AuthenticatedRoute.addChildren([AuthenticatedProfileRoute]),
   LoginRoute,
   NoteNoteIdRoute,
 ])
