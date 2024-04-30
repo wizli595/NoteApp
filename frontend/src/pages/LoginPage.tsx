@@ -3,9 +3,10 @@ import { ChangeEvent, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { login, UserInfo } from "../Api/authApi";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 interface ErrorResponse {
   message: string;
@@ -16,14 +17,14 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
+  const {login:Loggedin}=useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      queryClient.setQueryData(["user"], data);
-      localStorage.setItem("user",JSON.stringify(data));
+      Loggedin(data);
       toast.success("Logged in successfully!!");
       navigate({ to: "/profile" });
     },

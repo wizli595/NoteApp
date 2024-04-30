@@ -3,4 +3,5 @@ import LoginPage from "../pages/LoginPage";
 
 export const Route = createFileRoute("/login")({
   component: () => <LoginPage />,
+  pendingComponent: () => <div>Loading...</div>, 
 });

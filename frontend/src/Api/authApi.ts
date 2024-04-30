@@ -27,4 +27,19 @@ const login = async ({ email, password }: UserInfo): Promise<User> => {
     throw err;
   }
 };
-export { login };
+const checkSession = async (): Promise<User> => {
+  try {
+    const result = await axios.get<User>("/api/users/session");
+    const user = result.data;
+    return user;
+  } catch (err) {
+    if (!axios.isAxiosError(err)) {
+      console.error("An unexpected error occurred:", err);
+      throw new Error("An unexpected error occurred");
+    }
+    console.log(err.response?.data);
+    throw err;
+  }
+};
+
+export { login,checkSession };

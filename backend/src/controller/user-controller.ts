@@ -33,4 +33,32 @@ const authUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { authUser };
+
+/**
+ * @description Check Session
+ * @access Public
+ * @requires request
+ * @requires response
+ * @route GET /api/user/session
+ *
+ */
+
+const checkSession: RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.session?.jwt;
+    if (!token) {
+      throw new Error("No session found");
+    }
+    const decoded = jwt.verify(token, env.JWT_KEY) as { id: string; email: string };
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return res.status(200).send(user);
+  } catch (error) {
+    next(new OperationalError("Invalid session", 401));
+  }
+};
+
+export { authUser, checkSession };
+

@@ -5,5 +5,6 @@ import { validateUser } from "../middleware/validate-user";
 const route = Router();
 
 route.route("/").post(validateUser, UserController.authUser);
+// route.route("/session").get(UserController.checkSession);
 
 export default route;
