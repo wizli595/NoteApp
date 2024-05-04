@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { OperationalError } from "../utils/errors/operationalError";
 
 const prisma = new PrismaClient();
+
 /**
  * @description get All Notes
  * @route GET /api/notes

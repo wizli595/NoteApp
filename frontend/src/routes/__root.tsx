@@ -1,12 +1,13 @@
 import {  createRootRouteWithContext } from "@tanstack/react-router";
 import Layout from '../layout/Layout'
-import { AuthContext } from "../hooks/useAuth";
+import { AuthHookReturnType } from "../app/hooks/useAuth";
 
 type RouterContext = {
-  authentication: AuthContext;
+  authentication: AuthHookReturnType;
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad:({context})=>{console.log(context)},
-  component: () => <Layout />
+  component: () => <Layout />,
+  wrapInSuspense: true,
+
 });

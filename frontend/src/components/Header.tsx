@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaUser } from "react-icons/fa";
+import { FaUser ,FaTachometerAlt} from "react-icons/fa";
+import { IoPersonCircle } from 'react-icons/io5';
 import styles from "../assets/global.module.css";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../app/hooks/useAuth";
 
 const Header = () => {
-  const {isLogged,user}=useAuth();
+  const {isAuthenticated,user}=useAuth();
   return (
     <header className={styles.bgSlate}>
       <Navbar variant="dark" expand="md" collapseOnSelect>
@@ -18,8 +19,13 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-nav" />
           <Navbar.Collapse id="basic-nav">
             <Nav className="ms-auto">
-            {isLogged() ? (<NavDropdown title={user?.username} id="username">
-                                    <NavDropdown.Item as={Link} to={"/profile"}>Profile</NavDropdown.Item>
+            {isAuthenticated ? (<NavDropdown title={user?.username} id="username">
+                                    <NavDropdown.Item as={Link} to={"/profile"}>
+                                     <IoPersonCircle /> Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to={"/dashboard"}>
+                                     <FaTachometerAlt /> dashboard
+                                    </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
                                 <Nav.Link as={Link} to={'/login'}>

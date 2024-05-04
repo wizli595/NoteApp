@@ -16,6 +16,7 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as NoteNoteIdImport } from './routes/note/$noteId'
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
 
 // Create/Update Routes
 
@@ -44,6 +45,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
+const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -60,6 +66,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/dashboard': {
+      preLoaderRoute: typeof AuthenticatedDashboardImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/profile': {
       preLoaderRoute: typeof AuthenticatedProfileImport
       parentRoute: typeof AuthenticatedImport
@@ -75,7 +85,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
-  AuthenticatedRoute.addChildren([AuthenticatedProfileRoute]),
+  AuthenticatedRoute.addChildren([
+    AuthenticatedDashboardRoute,
+    AuthenticatedProfileRoute,
+  ]),
   LoginRoute,
   NoteNoteIdRoute,
 ])

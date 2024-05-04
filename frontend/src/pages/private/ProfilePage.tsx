@@ -1,8 +1,8 @@
 import React from 'react';
-import { useAuth } from '../../hooks/useAuth'; // Replace 'path/to/useAuth' with the actual path to your useAuth hook
+import { useAuth } from '../../app/hooks/useAuth'; 
 
 const ProfilePage: React.FC = () => {
-    const { user } = useAuth(); // Assuming the useAuth hook returns an object with a 'username' property
+    const { user } = useAuth(); 
 
     return (
         <div>

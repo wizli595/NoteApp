@@ -27,7 +27,7 @@ const NoteCard = ({ note }: Props) => {
           <Card.Subtitle className="mb-2 text-muted">
             Updated: {update_date}
           </Card.Subtitle>
-          <Card.Link as={Link} to={"/note/" + note.id}>
+          <Card.Link as={Link} to={"/profile"}>
             Read more...
           </Card.Link>
         </Card.Body>

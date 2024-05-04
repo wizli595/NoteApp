@@ -6,7 +6,7 @@ import { login, UserInfo } from "../Api/authApi";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../app/hooks/useAuth";
 
 interface ErrorResponse {
   message: string;
@@ -19,14 +19,14 @@ const LoginPage = () => {
   });
 
   const navigate = useNavigate();
-  const {login:Loggedin}=useAuth();
+  const { handleLogin } = useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      Loggedin(data);
+    onSuccess: async (data) => {
+      handleLogin(data);
       toast.success("Logged in successfully!!");
-      navigate({ to: "/profile" });
+      await navigate({ to: "/" });
     },
     onError: (err: unknown) => {
       if (axios.isAxiosError(err)) {

@@ -1,24 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router'
-import Loader from '../components/Loader';
-import {Error as ErrorFC} from '../components/Error';
+import {  createFileRoute, redirect } from '@tanstack/react-router';
+import AuthLayout from '../layout/AuthLayout';
 
 export const Route = createFileRoute('/_authenticated')({
-
-  beforeLoad:async ({context,navigate}) => {
-    const {isLogged}= context.authentication;
-    console.log('isLogged',isLogged());
-    // Check if the user is logged in
-    if (!isLogged()) {
-      await navigate({ to: '/login' });
-      throw new Error('Not logged in' as string);
-      // return new Promise((_, reject) => setTimeout(reject, 0));
+  beforeLoad: async ({ context, location }) => {
+    if (!context.authentication.isAuthenticated) {
+      console.log('Authenticated route', context.authentication.isAuthenticated);
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.pathname + location.search, 
+        },
+      });
     }
-  },  
-  pendingComponent:()=>(<Loader />),
-  
-  errorComponent: (error ) => {
-    return (
-      <ErrorFC error={error} />
-    );
-  }, 
+    
+  },
+  component: AuthLayout ,
+ 
 })

@@ -32,7 +32,18 @@ const authUser: RequestHandler = async (req, res, next) => {
     next(new OperationalError("Invalid credintial !!", 405));
   }
 };
-
+/**
+ * @description destroy user session
+ * @route POST /api/user/loggout
+ * @access PRIVATE
+ * @param req
+ * @param res
+ * @returns  Promise<Response>
+ */
+const logout: RequestHandler = async (req, res) => {
+  req.session = null;
+  return res.status(200).send("Logged out successfully");
+};
 
 /**
  * @description Check Session
@@ -49,7 +60,10 @@ const checkSession: RequestHandler = async (req, res, next) => {
     if (!token) {
       throw new Error("No session found");
     }
-    const decoded = jwt.verify(token, env.JWT_KEY) as { id: string; email: string };
+    const decoded = jwt.verify(token, env.JWT_KEY) as {
+      id: string;
+      email: string;
+    };
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
     if (!user) {
       throw new Error("User not found");
@@ -60,5 +74,4 @@ const checkSession: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { authUser, checkSession };
-
+export { authUser, checkSession, logout };
