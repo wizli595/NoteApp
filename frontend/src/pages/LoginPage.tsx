@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../app/hooks/useAuth";
 
-interface ErrorResponse {
+export interface ErrorResponse {
   message: string;
 }
 

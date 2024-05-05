@@ -5,7 +5,8 @@ import { OperationalError } from "../utils/errors/operationalError";
 import { ParamsDictionary } from "express-serve-static-core";
 import { User } from "@prisma/client";
 import { ParsedQs } from "qs";
-interface CustomRequest
+
+export interface CustomRequest
   extends Request<
     ParamsDictionary,
     unknown,
@@ -40,8 +41,7 @@ const protect: RequestHandler = (
     const decoded = jwt.verify(token, env.JWT_KEY);
     console.log(decoded);
     (req as CustomRequest).user = decoded;
-    console.log(decoded);
-
+    console.log((req as CustomRequest).user);
     next();
   } catch (error) {
     res.status(401);

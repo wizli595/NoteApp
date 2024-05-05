@@ -25,9 +25,20 @@ const prisma = new PrismaClient().$extends({
             user?.password as string
           ));
 
-
         if (!isMatch) throw new OperationalError("Invalid Credentionels", 400);
         return user;
+      },
+      async update({ args, query }) {
+        const { password } = args.data;
+        if (password) {
+          const salt = await bcryptjs.genSalt(10);
+          const hashPassword = await bcryptjs.hash(password as string, salt);
+          return query({
+            ...args,
+            data: { ...args.data, password: hashPassword },
+          });
+        }
+        return query(args);
       },
     },
   },

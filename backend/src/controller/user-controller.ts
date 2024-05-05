@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { OperationalError } from "../utils/errors/operationalError";
 import prisma from "../../prisma/middleware/prismaMiddleware";
 import env from "../utils/validateEnv";
+import { CustomRequest } from "../middleware/authMiddleware";
+
 /**
  * @description Log In
  * @access Public
@@ -18,7 +20,7 @@ const authUser: RequestHandler = async (req, res, next) => {
     const existingUser = await prisma.user.findUniqueOrThrow({
       where: { email, password },
     });
-    if (!existingUser) throw new Error("shit");
+    if (!existingUser) throw new Error("Invalid credintial !!");
     console.log(existingUser);
     const signedJWT = jwt.sign(
       { id: existingUser.id, email: existingUser.email },
@@ -27,6 +29,7 @@ const authUser: RequestHandler = async (req, res, next) => {
     req.session = {
       jwt: signedJWT,
     };
+
     return res.status(200).send(existingUser);
   } catch (error) {
     next(new OperationalError("Invalid credintial !!", 405));
@@ -43,6 +46,66 @@ const authUser: RequestHandler = async (req, res, next) => {
 const logout: RequestHandler = async (req, res) => {
   req.session = null;
   return res.status(200).send("Logged out successfully");
+};
+
+/**
+ * @description Update the userName and email
+ * @access PRIVATE
+ * @route PUT api/users
+ * @param req
+ * @param res
+ * @param next
+ * @returns Promise<Response>
+ */
+const updateUser: RequestHandler = async (req, res, next) => {
+  const { email, username } = req.body;
+  try {
+    const userId = ((req as CustomRequest)?.user as { id: string })?.id;
+    if (!userId) {
+      throw new Error("No user session found");
+    }
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { email, username },
+    });
+    return res.status(200).send(updatedUser);
+  } catch (error) {
+    next(new OperationalError("Failed to update user", 500));
+  }
+};
+
+/**
+ * @description Change the password
+ * @access PRIVATE
+ * @route PUT api/users/password
+ * @param req
+ * @param res
+ * @param next
+ * @returns Promise<Response>
+ */
+
+const changePassword: RequestHandler = async (req, res, next) => {
+  const { password: currentPassword, newPassword } = req.body;
+  try {
+    const userId = ((req as CustomRequest)?.user as { id: string })?.id;
+    if (!userId) {
+      throw new Error("No user session found");
+    }
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (user.password === currentPassword) {
+      throw new Error("use different password");
+    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: newPassword },
+    });
+    return res.status(200).send("Password updated successfully");
+  } catch (error) {
+    next(new OperationalError("Failed to update password", 500));
+  }
 };
 
 /**
@@ -74,4 +137,4 @@ const checkSession: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { authUser, checkSession, logout };
+export { authUser, checkSession, logout, updateUser, changePassword };
