@@ -35,4 +35,20 @@ const getNoteById = async (id: string): Promise<Note> => {
   }
 };
 
-export { getAllNotes, getNoteById };
+/**
+ * @description Fetch My Notes
+ * @endpoint /api/notes/mine
+ * @return Promise<Note[]>
+ */
+
+const getMyNotes = async (): Promise<Note[]> => {
+  try {
+    const response = await axios.get<Note[]>("/api/notes/mine");
+    const notes = response.data;
+    return notes;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+export { getAllNotes, getNoteById,getMyNotes };

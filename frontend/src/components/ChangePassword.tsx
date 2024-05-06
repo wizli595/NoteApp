@@ -78,7 +78,7 @@ const ChangePassword = ({changePassword,isPending}: Props) => {
                         />
                 </Form.Group>
                 <Button 
-                    variant="primary" 
+                    variant="success" 
                     type="submit"
                     disabled={isPending}
                     >

@@ -59,10 +59,10 @@ const UpdateUser = ({update,isPending,loggout}:UpdateUserProps) => {
                       />
                   </Form.Group>
                   <Button 
-                    variant="primary" 
+                    variant="success" 
                     type="submit"
                     disabled={isPending}>
-                    Submit
+                    Update
                   </Button>
                 </Form>    
             </Card.Body>

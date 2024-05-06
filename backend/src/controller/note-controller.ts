@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { PrismaClient } from "@prisma/client";
 import { OperationalError } from "../utils/errors/operationalError";
+import { CustomRequest } from "../middleware/authMiddleware";
 
 const prisma = new PrismaClient();
 
@@ -70,7 +71,7 @@ const createNote: RequestHandler = async (req, res, next) => {
 };
 
 /**
- * @desc   Create note
+ * @desc   update note
  * @route  PUT /api/notes/:id
  * @access Private
  * @param req 
@@ -94,8 +95,8 @@ const updateNote: RequestHandler = async (req, res, next) => {
 };
 
 /**
- * @desc   Create note
- * @route  PUT /api/notes/:id
+ * @desc   Delete note
+ * @route  Delete /api/notes/:id
  * @access Private
  * @param req 
  * @param res 
@@ -115,10 +116,34 @@ const deleteNote: RequestHandler = async (req, res, next) => {
   }
 };
 
+/**
+ * @description get My Notes
+ * @route GET /api/notes/mine
+ * @access Private
+ * @param req 
+ * @param res 
+ * @param next 
+ * @returns Promise<Response>
+ */
+const getMyNotes: RequestHandler = async (req, res, next) => {
+  const userId = ((req as CustomRequest)?.user as { id: string })?.id;
+  console.log(userId);
+  try {
+    const notes = await prisma.note.findMany({
+      where: { userId },
+    });
+    res.send(notes);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : " ";
+    next(new OperationalError("Failed to retrieve notes " + message, 402));
+  }
+};
+
 export {
    getNotes,
    getNoteById,
    createNote,
    updateNote,
-   deleteNote
+   deleteNote,
+  getMyNotes
 };

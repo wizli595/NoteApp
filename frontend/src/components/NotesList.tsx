@@ -3,6 +3,7 @@ import { Row } from "react-bootstrap";
 import NoteCard from "./NoteCard";
 type Props = {
   notes: Note[];
+
 };
 
 const NotesList = ({ notes }: Props) => {

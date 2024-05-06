@@ -80,7 +80,7 @@ const DashboardPage: React.FC = () => {
             <Row>
                 <Col className='mt-4'>
                     <Card>
-                        <Card.Header as="h5">Log out</Card.Header>
+                        <Card.Header as="h5"><MdLogout  /> Log out</Card.Header>
                         <Card.Body>
                             
                             <Card.Text>

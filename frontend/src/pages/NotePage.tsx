@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import {  useRouter, useParams } from "@tanstack/react-router";
+
 import { getNoteById } from "../Api/noteApi";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
 const NotePage = () => {
   const { noteId } = useParams({ from: "/note/$noteId" });
+  const {history} = useRouter();
   const {
     data: note,
     isError,
@@ -19,6 +21,11 @@ const NotePage = () => {
   });
   return (
     <>
+      <Button  className="m-4" onClick={()=>{
+        history.back();
+      }}>
+        Go Back to Home 
+      </Button>
       {isLoading ? (
         <Loader />
       ) : isError ? (
