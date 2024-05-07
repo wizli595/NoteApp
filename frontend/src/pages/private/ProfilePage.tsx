@@ -7,7 +7,12 @@ import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 const ProfilePage: React.FC = () => {
     const { user } = useAuth(); 
-    const {data:myNotes,isError,isLoading,error}= useQuery({queryKey:["myNotes"], queryFn:()=>getMyNotes()});
+    const {
+      data: myNotes,
+      isError,
+      isLoading,
+      error,
+    } = useQuery({ queryKey: ["myNotes"], queryFn: () => getMyNotes() });
 
     return (
       <div>

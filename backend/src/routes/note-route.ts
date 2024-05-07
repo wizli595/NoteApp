@@ -7,15 +7,15 @@ const route = Router();
 route
   .route("/")
   .get(NoteController.getNotes)
-  .post(validateNote, NoteController.createNote);
+  .post(protect,validateNote, NoteController.createNote);
 
 route.route("/mine").get(protect,NoteController.getMyNotes);
 
 route
   .route("/:id")
   .get(NoteController.getNoteById)
-  .put(NoteController.updateNote)
-  .delete(NoteController.deleteNote);
+  .put(protect,validateNote,NoteController.updateNote)
+  .delete(protect,NoteController.deleteNote);
 
 
 export default route;

@@ -9,8 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '../../app/hooks/useAuth';
 import UpdateUser from '../../components/UpdateUser';
 import ChangePassword from '../../components/ChangePassword';
-import { ErrorResponse } from '../LoginPage';
-import axios from 'axios';
+import { formatError } from '../../utils/formatError';
 
 const DashboardPage: React.FC = () => {
     const {handleLogout:localLoggout}=useAuth();
@@ -24,8 +23,7 @@ const DashboardPage: React.FC = () => {
             navigate({to:'/login'});
         },
         onError:(err:unknown)=>{
-            console.error(err);
-            toast.error('An unexpected error occurred');
+            formatError(err);
         }   
     });
 
@@ -37,8 +35,7 @@ const DashboardPage: React.FC = () => {
           navigate({to:'/'});
         },
         onError:(err:unknown)=>{
-          console.error(err);
-          toast.error('An unexpected error occurred');
+          formatError(err);
         }
       });
     // change password mutation
@@ -48,14 +45,7 @@ const DashboardPage: React.FC = () => {
           toast.success('Password changed successfully');
         },
         onError:(err:unknown)=>{
-          if (axios.isAxiosError(err)) {
-            const errorData = err.response?.data as ErrorResponse;
-            const serverMessage = errorData.message || "Something went wrong!";
-            toast.error(serverMessage);
-        } else {
-            console.error("Unexpected error:", err);
-            toast.error("An unexpected error occurred");
-        }
+          formatError(err);
         }
     });
 

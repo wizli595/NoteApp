@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import CreateNotePage from '../../../pages/private/note/CreateNotePage'
 
 export const Route = createFileRoute('/note/_authenticated/create')({
-  component: () => <div>Hello /note/_authenticated/create!</div>
+  component: CreateNotePage
 })

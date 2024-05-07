@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import {  useRouter, useParams } from "@tanstack/react-router";
-
+import {  useRouter, useParams, Link } from "@tanstack/react-router";
+import { IoIosArrowBack } from "react-icons/io";
 import { getNoteById } from "../Api/noteApi";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { Button, Card } from "react-bootstrap";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { useAuth } from "../app/hooks/useAuth";
 
 const NotePage = () => {
   const { noteId } = useParams({ from: "/note/$noteId" });
-  const {history} = useRouter();
+  const {history,navigate} = useRouter();
+  const {isAuthenticated,user}=useAuth();
   const {
     data: note,
     isError,
@@ -19,12 +22,18 @@ const NotePage = () => {
     queryKey: ["Note", noteId],
     queryFn: () => getNoteById(noteId),
   });
+  const handleSuppression = () => {
+    const confirmation = confirm("to delete note go to /profile and delete it.");
+    if (confirmation) {
+      navigate({to:"/profile"});
+    }
+  }
   return (
     <>
       <Button  className="m-4" onClick={()=>{
         history.back();
       }}>
-        Go Back to Home 
+        <IoIosArrowBack /> Go Back 
       </Button>
       {isLoading ? (
         <Loader />
@@ -47,6 +56,21 @@ const NotePage = () => {
               {formatDistanceToNow(parseISO(note.updatedAt.toLocaleString()))}
             </Card.Subtitle>
           </Card.Body>
+          {isAuthenticated  &&  user?.id === note.userId && (
+         <Card.Footer className="d-flex justify-content-between p-3">
+         <Button variant="success" className="flex-grow-1 me-2 btn-sm">
+             <Card.Link as={Link} to={"/note/"+note.id+"/edit"} className="text-white text-decoration-none">
+                 <FaEdit style={{marginBottom:"5px"}}/> Edit Note
+             </Card.Link>
+         </Button>
+         <Button variant="danger" className="flex-grow-1 ms-2 btn-sm" onClick={handleSuppression}>
+             <Card.Link  className="text-white text-decoration-none">
+                <FaTrash  style={{marginBottom:"5px"}}/> Delete Note
+             </Card.Link>
+         </Button>
+     </Card.Footer>
+
+        )}
         </Card>
       ) : (
         <Message variant="info">No note found.</Message>

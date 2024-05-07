@@ -59,9 +59,10 @@ const getNoteById: RequestHandler = async (req, res, next) => {
 
 const createNote: RequestHandler = async (req, res, next) => {
   const { title, text } = req.body;
+  const userId = ((req as CustomRequest)?.user as { id: string })?.id;
   try {
     const createdNote = await prisma.note.create({
-      data: { title, text, userId: "6604d98a618e3af983e0f36c" },
+      data: { title, text, userId},
     });
     res.status(201).send(createdNote);
   } catch (error) {
@@ -127,7 +128,6 @@ const deleteNote: RequestHandler = async (req, res, next) => {
  */
 const getMyNotes: RequestHandler = async (req, res, next) => {
   const userId = ((req as CustomRequest)?.user as { id: string })?.id;
-  console.log(userId);
   try {
     const notes = await prisma.note.findMany({
       where: { userId },

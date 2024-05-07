@@ -5,8 +5,8 @@ import FormContainer from "../components/FormContainer";
 import { login, UserInfo } from "../Api/authApi";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useAuth } from "../app/hooks/useAuth";
+import { formatError } from "../utils/formatError";
 
 export interface ErrorResponse {
   message: string;
@@ -29,14 +29,7 @@ const LoginPage = () => {
       await navigate({ to: "/" });
     },
     onError: (err: unknown) => {
-      if (axios.isAxiosError(err)) {
-        const errorData = err.response?.data as ErrorResponse;
-        const serverMessage = errorData.message || "Something went wrong!";
-        toast.error(serverMessage);
-      } else {
-        console.error("Unexpected error:", err);
-        toast.error("An unexpected error occurred");
-      }
+     formatError(err);
     },
   });
 
