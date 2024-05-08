@@ -32,7 +32,8 @@ const DashboardPage: React.FC = () => {
         mutationFn:updateUser,
         onSuccess:()=>{
           toast.success('update successfully');
-          navigate({to:'/'});
+          handleLogout();
+        //   navigate({to:'/'});
         },
         onError:(err:unknown)=>{
           formatError(err);
@@ -88,7 +89,7 @@ const DashboardPage: React.FC = () => {
             </Row>
             <Row>
                 <Col className='mt-4'>
-                    <UpdateUser update={update} loggout={handleLogout} isPending={isLoading}  />
+                    <UpdateUser update={update} isPending={isLoading}  />
                 </Col>
             </Row>
             <Row>

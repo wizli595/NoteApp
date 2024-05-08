@@ -3,6 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import env from "../utils/validateEnv";
 import { OperationalError } from "../utils/errors/operationalError";
 
+/**
+ * @description Error Handler
+ * @param error 
+ * @param req 
+ * @param res 
+ * @param _next 
+ * @returns void
+ */
 function errorhandler(
   error: OperationalError,
   req: Request,
@@ -18,6 +26,12 @@ function errorhandler(
   }
 }
 
+/**
+ * @description Send Error in Development
+ * @param err 
+ * @param res 
+ * @returns void
+ */
 const sendErrorDev = (err: OperationalError, res: Response) => {
   console.error("ERROR ", err);
   res.status(err.statusCode || 500).json({
@@ -28,6 +42,12 @@ const sendErrorDev = (err: OperationalError, res: Response) => {
   });
 };
 
+/**
+ * @description Send Error in Production
+ * @param err 
+ * @param res 
+ * @returns void
+ */
 const sendErrorProd = (err: OperationalError, res: Response) => {
   if (!err.isOperational) {
     res.status(err.statusCode || 500).send({
@@ -40,6 +60,14 @@ const sendErrorProd = (err: OperationalError, res: Response) => {
     message: "Somthing went wrong",
   });
 };
+
+/**
+ * @description Not Found Handler
+ * @param req 
+ * @param res 
+ * @param next 
+ * @returns void
+ */
 
 const notFound = (req: Request, _res: Response, next: NextFunction) => {
   const error = new OperationalError(

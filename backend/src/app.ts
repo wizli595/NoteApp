@@ -8,9 +8,27 @@ import { accessLogStream } from "./utils/accessLogStream";
 import cors from "cors";
 import cookieSession from "cookie-session";
 import env from "./utils/validateEnv";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
 
 const app = express();
 const front = env.FRONT_END_URL;
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Notes/Users API",
+      version: "1.0.0",
+      description: "Notes/Users API Information",
+      contact: {
+        name: "Abdessalam Ouazri",
+      },
+      servers: ["http://localhost:5000"],
+    },
+  },
+  apis: ["./src/routes/*.ts"],
+};
 
 app.use(
   cors({
@@ -29,6 +47,9 @@ app.use(
   })
 );
 app.use(express.json());
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/api/notes", noteRouter);
 app.use("/api/users", userRouter);

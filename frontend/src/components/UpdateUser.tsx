@@ -10,11 +10,10 @@ export interface UpdateInfo {
 }
 type UpdateUserProps = {
   update: UseMutateFunction<void, unknown, UpdateInfo, unknown>;
-  loggout:() => Promise<void>;
   isPending:boolean;
 };
 
-const UpdateUser = ({update,isPending,loggout}:UpdateUserProps) => {
+const UpdateUser = ({update,isPending}:UpdateUserProps) => {
   const [updateInfo,setUpdateInfo]=useState<UpdateInfo>({email:'',username:''});
   
   const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
@@ -28,7 +27,6 @@ const UpdateUser = ({update,isPending,loggout}:UpdateUserProps) => {
     e.preventDefault();
     console.log(updateInfo);
     update(updateInfo);
-    loggout();
   };
   return (
     <>
@@ -46,7 +44,8 @@ const UpdateUser = ({update,isPending,loggout}:UpdateUserProps) => {
                       name="email"
                       placeholder="Enter email"
                       value={updateInfo.email} 
-                      onChange={handleChange}/>
+                      onChange={handleChange}
+                      required/>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicUsername">
                     <Form.Label>Username</Form.Label>
@@ -56,6 +55,7 @@ const UpdateUser = ({update,isPending,loggout}:UpdateUserProps) => {
                       placeholder="Enter username"
                       value={updateInfo.username}
                       onChange={handleChange}
+                      required
                       />
                   </Form.Group>
                   <Button 
