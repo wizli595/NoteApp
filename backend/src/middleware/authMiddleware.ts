@@ -33,7 +33,6 @@ const protect: RequestHandler = (
   const token = req.session?.jwt;
 
   if (!token) {
-    // If token is not present, return an error
     throw new OperationalError("Unauthorized", 401);
   }
 

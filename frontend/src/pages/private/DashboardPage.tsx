@@ -52,7 +52,7 @@ const DashboardPage: React.FC = () => {
         }
     });
     // get all user sesiions
-    const {data:sessions,isLoading:LoadingSession}=useQuery({queryKey:['sessions'],queryFn:getMysession});
+    const {data:sessions,isLoading:LoadingSession,isError}=useQuery({queryKey:['sessions'],queryFn:getMysession});
     // handle logout
     const handleLogout = async () => {
         console.log('Logout');
@@ -101,7 +101,9 @@ const DashboardPage: React.FC = () => {
             </Row>
             <Row>
                 <Col className='mt-4'>
-                    {LoadingSession ? <p>Loading...</p> :<SessionCard    sessions={sessions!} />
+                    {LoadingSession ? <p>Loading...</p>:isError ?
+                    (<p>Something went wrong</p>)
+                     :<SessionCard    sessions={sessions!} />
                     }
                 </Col>
             </Row>

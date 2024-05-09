@@ -168,6 +168,7 @@ const getMysession: RequestHandler = async (req, res, next) => {
       email: string;
     };
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    console.log(user)
     if (!user) {
       throw new Error("User not found");
     }
@@ -180,6 +181,41 @@ const getMysession: RequestHandler = async (req, res, next) => {
   }
 };
 
+/**
+ * @description Log out from all sessions
+ * @access PRIVATE
+ * @route POST api/users/loggoutAll
+ * @param req
+ * @param res
+ * @param next
+ * @returns Promise<Response>
+ * */
+const loggoutAllSessions : RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.session?.jwt;
+    if (!token) {
+      throw new Error("No session found");
+    }
+    const decoded = jwt.verify(token, env.JWT_KEY) as {
+      id: string;
+      email: string;
+    };
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    // exept the current session
+    await prisma.session.deleteMany({
+      where: { userId: user.id, token: { not: token } },
+    });
+    
+    return res.status(200).send("Logged out from all sessions");
+  } catch (error) {
+    next(new OperationalError("Invalid session", 401));
+  }
+};
+
 export {
   authUser,
   checkSession,
@@ -187,4 +223,5 @@ export {
   updateUser,
   changePassword,
   getMysession,
+  loggoutAllSessions
 };

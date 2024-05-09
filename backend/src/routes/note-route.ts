@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as NoteController from "../controller/note-controller";
 import { validateNote } from "../middleware/validate-note";
 import { protect } from "../middleware/authMiddleware";
+import { validateSession } from "../middleware/validate-session";
 const route = Router();
 
 /**
@@ -52,7 +53,7 @@ route
   .get(NoteController.getNotes)
   .post(protect, validateNote, NoteController.createNote);
 
-route.route("/mine").get(protect, NoteController.getMyNotes);
+route.route("/mine").get(validateSession,protect, NoteController.getMyNotes);
 
 route
   .route("/:id")

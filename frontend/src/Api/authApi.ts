@@ -39,6 +39,7 @@ const login = async ({
     throw err;
   }
 };
+
 /**
  * @description Log out
  * @endpiont POST api/users/loggout
@@ -57,6 +58,7 @@ const logout = async () => {
     throw err;
   }
 };
+
 /**
  * @description Update user
  * @endpiont PUT api/users
@@ -95,6 +97,12 @@ const changePassword = async ({ password, newPassword }: Password) => {
   }
 };
 
+/**
+ * @description Get my session
+ * @endpiont GET api/users/sessions
+ * @returns Promise<Session[]>
+ * @access Private
+ */
 const getMysession = async () => {
   try {
     const result = await apiClient.get<Session[]>("/users/sessions");
@@ -107,4 +115,23 @@ const getMysession = async () => {
     throw err;
   }
 };
-export { login, logout, updateUser, changePassword, getMysession };
+
+/**
+ * @description Log out all my sessions
+ * @endpiont DELETE api/users/sessions
+ * @returns Promise<void>
+ * @access Private
+ */
+
+const loggoutAllMySessions = async () => {
+  try {
+    await apiClient.delete("/users/sessions");
+  } catch (err) {
+    if (!axios.isAxiosError(err)) {
+      console.error("An unexpected error occurred:", err);
+      throw new Error("An unexpected error occurred");
+    }
+    throw err;
+  }
+}
+export { login, logout, updateUser, changePassword, getMysession , loggoutAllMySessions};
