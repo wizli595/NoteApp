@@ -1,11 +1,13 @@
 import axios from "axios";
-import { User } from "@prisma/client";
+import { User, Session } from "@prisma/client";
 import { UpdateInfo } from "../components/UpdateUser";
 import { Password } from "../components/ChangePassword";
+import apiClient from "./baseApi";
 
 export type UserInfo = {
   email: string;
   password: string;
+  userAgent?: string;
 };
 
 /**
@@ -15,9 +17,17 @@ export type UserInfo = {
  * @returns Promise<User>
  * @access Public
  */
-const login = async ({ email, password }: UserInfo): Promise<User> => {
+const login = async ({
+  email,
+  password,
+  userAgent,
+}: UserInfo): Promise<User> => {
   try {
-    const result = await axios.post<User>("/api/users", { email, password });
+    const result = await apiClient.post<User>("/users", {
+      email,
+      password,
+      userAgent,
+    });
     const user = result.data;
     return user;
   } catch (err) {
@@ -38,7 +48,7 @@ const login = async ({ email, password }: UserInfo): Promise<User> => {
  */
 const logout = async () => {
   try {
-    await axios.post("/api/users/loggout");
+    await apiClient.post("/users/loggout");
   } catch (err) {
     if (!axios.isAxiosError(err)) {
       console.error("An unexpected error occurred:", err);
@@ -56,7 +66,7 @@ const logout = async () => {
  */
 const updateUser = async (user: UpdateInfo) => {
   try {
-    await axios.put("/api/users/", user);
+    await apiClient.put("/users/", user);
   } catch (err) {
     if (!axios.isAxiosError(err)) {
       console.error("An unexpected error occurred:", err);
@@ -65,9 +75,17 @@ const updateUser = async (user: UpdateInfo) => {
     throw err;
   }
 };
+
+/**
+ * @description Change password
+ * @endpiont PUT api/users/password
+ * @param Password
+ * @returns Promise<void>
+ * @access Private
+ */
 const changePassword = async ({ password, newPassword }: Password) => {
   try {
-    await axios.put("/api/users/password", { password, newPassword });
+    await apiClient.put("/users/password", { password, newPassword });
   } catch (err) {
     if (!axios.isAxiosError(err)) {
       console.error("An unexpected error occurred:", err);
@@ -76,4 +94,17 @@ const changePassword = async ({ password, newPassword }: Password) => {
     throw err;
   }
 };
-export { login, logout, updateUser, changePassword };
+
+const getMysession = async () => {
+  try {
+    const result = await apiClient.get<Session[]>("/users/sessions");
+    return result.data;
+  } catch (err) {
+    if (!axios.isAxiosError(err)) {
+      console.error("An unexpected error occurred:", err);
+      throw new Error("An unexpected error occurred");
+    }
+    throw err;
+  }
+};
+export { login, logout, updateUser, changePassword, getMysession };

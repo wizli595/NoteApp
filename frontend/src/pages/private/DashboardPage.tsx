@@ -3,13 +3,14 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import Timer from '../../components/Timer';
 import { MdLogout} from 'react-icons/md';
 import { useNavigate } from '@tanstack/react-router';
-import { logout, updateUser,changePassword as changePass } from '../../Api/authApi';
+import { logout, updateUser,changePassword as changePass, getMysession } from '../../Api/authApi';
 import { toast } from 'react-toastify';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../app/hooks/useAuth';
 import UpdateUser from '../../components/UpdateUser';
 import ChangePassword from '../../components/ChangePassword';
 import { formatError } from '../../utils/formatError';
+import SessionCard from '../../components/SessionCard';
 
 const DashboardPage: React.FC = () => {
     const {handleLogout:localLoggout}=useAuth();
@@ -20,6 +21,7 @@ const DashboardPage: React.FC = () => {
         mutationFn:logout,
         onSuccess:()=>{
             toast.success('Logged out successfully');
+            localLoggout();
             navigate({to:'/login'});
         },
         onError:(err:unknown)=>{
@@ -49,11 +51,11 @@ const DashboardPage: React.FC = () => {
           formatError(err);
         }
     });
-
+    // get all user sesiions
+    const {data:sessions,isLoading:LoadingSession}=useQuery({queryKey:['sessions'],queryFn:getMysession});
     // handle logout
     const handleLogout = async () => {
         console.log('Logout');
-        localLoggout();
         mutate();
     }
     return (
@@ -95,6 +97,12 @@ const DashboardPage: React.FC = () => {
             <Row>
                 <Col className='mt-4'>
                     <ChangePassword changePassword={change} isPending={isLoadingChange}/>
+                </Col>
+            </Row>
+            <Row>
+                <Col className='mt-4'>
+                    {LoadingSession ? <p>Loading...</p> :<SessionCard    sessions={sessions!} />
+                    }
                 </Col>
             </Row>
         </Container>

@@ -19,7 +19,7 @@ const LoginPage = () => {
   });
 
   const navigate = useNavigate();
-  const { handleLogin } = useAuth();
+  const { handleLogin,userAgent } = useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
@@ -39,7 +39,7 @@ const LoginPage = () => {
   };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutate(loginInfo);
+    mutate({...loginInfo,userAgent});
   };
   return (
     <>

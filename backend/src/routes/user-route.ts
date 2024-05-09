@@ -15,5 +15,5 @@ route.route("/loggout").post(protect, UserController.logout);
 route
   .route("/password")
   .put(protect, validatePassword, UserController.changePassword);
-
+route.route("/sessions").get(protect, UserController.getMysession);
 export default route;

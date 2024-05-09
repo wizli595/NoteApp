@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.note.deleteMany({});
   await prisma.user.deleteMany({});
+  await prisma.session.deleteMany({});
 
   console.log(colors.bgRed("Database has been emptied."));
 }

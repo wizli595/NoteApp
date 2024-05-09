@@ -15,7 +15,7 @@ import { CustomRequest } from "../middleware/authMiddleware";
  */
 
 const authUser: RequestHandler = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, userAgent } = req.body;
   try {
     const existingUser = await prisma.user.findUniqueOrThrow({
       where: { email, password },
@@ -29,6 +29,15 @@ const authUser: RequestHandler = async (req, res, next) => {
     req.session = {
       jwt: signedJWT,
     };
+
+    // insert the jwt into the session table
+    await prisma.session.create({
+      data: {
+        token: signedJWT,
+        userAgent,
+        userId: existingUser.id,
+      },
+    });
 
     return res.status(200).send(existingUser);
   } catch (error) {
@@ -44,6 +53,7 @@ const authUser: RequestHandler = async (req, res, next) => {
  * @returns  Promise<Response>
  */
 const logout: RequestHandler = async (req, res) => {
+  await prisma.session.deleteMany({ where: { token: req.session?.jwt } });
   req.session = null;
   return res.status(200).send("Logged out successfully");
 };
@@ -137,4 +147,44 @@ const checkSession: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { authUser, checkSession, logout, updateUser, changePassword };
+/**
+ * @description Get user session
+ * @access PRIVATE
+ * @route GET api/users/sessions
+ * @param req
+ * @param res
+ * @param next
+ * @returns Promise<Response>
+ */
+
+const getMysession: RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.session?.jwt;
+    if (!token) {
+      throw new Error("No session found");
+    }
+    const decoded = jwt.verify(token, env.JWT_KEY) as {
+      id: string;
+      email: string;
+    };
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const sessions = await prisma.session.findMany({
+      where: { userId: user.id },
+    });
+    return res.status(200).send(sessions);
+  } catch (error) {
+    next(new OperationalError("Invalid session", 401));
+  }
+};
+
+export {
+  authUser,
+  checkSession,
+  logout,
+  updateUser,
+  changePassword,
+  getMysession,
+};

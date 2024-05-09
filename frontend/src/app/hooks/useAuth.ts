@@ -19,7 +19,10 @@ export const useAuth = () => {
   };
   const isAuthenticated = !!user;
 
+  const userAgent = navigator.userAgent;
+
   return {
+    userAgent,
     user,
     handleLogin,
     handleLogout,
