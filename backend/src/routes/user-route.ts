@@ -19,7 +19,7 @@ route
 route
   .route("/sessions")
   .get(validateSession,protect, UserController.getMysession)
-  // .delete(validateSession,protect, UserController.loggoutAllSessions);
+  .delete(validateSession,protect, UserController.loggoutAllSessions);
 
 
 export default route;

@@ -26,11 +26,11 @@ const getFormattedDateTime = () => {
 apiClient.interceptors.request.use(
   (config) => {
     const logEntry = `${getFormattedDateTime()} "${(config.method as string).toUpperCase()} ${config.url} HTTP/1.1" "${userAgent}"`;
-    console.log(logEntry);
+    // console.log(logEntry);
     return config;
   },
   (error) => {
-    console.error("Request Error:", error);
+    // console.error("Request Error:", error);
     return Promise.reject(error);
   }
 );
@@ -39,13 +39,17 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     const logEntry = `${getFormattedDateTime()} "${response.config.method!.toUpperCase()} ${response.config.url} HTTP/1.1" ${response.status} "${userAgent}"`;
-    console.log(logEntry);
+    // console.log(logEntry);
     return response;
   },
   (error) => {
     if (error.response) {
       const logEntry = `${getFormattedDateTime()} "${error.config.method.toUpperCase()} ${error.config.url} HTTP/1.1" ${error.response.status} "${userAgent}"`;
-      console.error(logEntry, error.response.data);
+      // console.error(logEntry, error.response.data);
+      if (error.response.status === 401) {
+        // Unauthorized
+        localStorage.removeItem("persist:root");
+      }
     } else {
       console.error("Response Error:", error.message);
     }

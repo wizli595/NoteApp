@@ -4,9 +4,9 @@
   "description": "Backend for Notes App",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev src/server.ts",
+    "start": "ts-node-dev --respawn src/server.ts",
     "client": "npm run dev --prefix ../frontend",
-    "app": "concurrently \"npm run client\" \"npm run start\" ",
+    "app": "concurrently \"npm run start\" \"npm run client\" ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "rest": "tsx prisma/commands/reset.ts",
     "route:list": "tsx ./src/commands/route-list.ts"

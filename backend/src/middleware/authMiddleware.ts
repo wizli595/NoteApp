@@ -32,9 +32,10 @@ const protect: RequestHandler = (
   // Get the JWT token from the session or request headers
   const token = req.session?.jwt;
 
-  if (!token) {
-    throw new OperationalError("Unauthorized", 401);
-  }
+  // if (!token) {
+  //   // If tok en is not present, return an error
+  //   throw new OperationalError("Unauthorized", 401);
+  // }
 
   try {
     const decoded = jwt.verify(token, env.JWT_KEY);
