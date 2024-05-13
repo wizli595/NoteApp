@@ -10,4 +10,5 @@ export default cleanEnv(process.env, {
   NODE_ENV: str(),
   FRONT_END_URL: str(),
   JWT_KEY: str(),
+  SENDINBLUE_PASSWORD: str(),
 });

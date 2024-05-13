@@ -5,6 +5,7 @@ import { OperationalError } from "../utils/errors/operationalError";
 import { ParamsDictionary } from "express-serve-static-core";
 import { User } from "@prisma/client";
 import { ParsedQs } from "qs";
+import prisma from "../../prisma/middleware/prismaMiddleware";
 
 export interface CustomRequest
   extends Request<
@@ -24,7 +25,7 @@ export interface CustomRequest
  * @param res
  * @param next
  */
-const protect: RequestHandler = (
+const protect: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -32,15 +33,12 @@ const protect: RequestHandler = (
   // Get the JWT token from the session or request headers
   const token = req.session?.jwt;
 
-  // if (!token) {
-  //   // If tok en is not present, return an error
-  //   throw new OperationalError("Unauthorized", 401);
-  // }
-
   try {
     const decoded = jwt.verify(token, env.JWT_KEY);
-    console.log(decoded);
-    (req as CustomRequest).user = decoded;
+    const user = await prisma.user.findUnique({
+      where: { id: (decoded as jwt.JwtPayload).id },
+      });
+    (req as CustomRequest).user = user;
     console.log((req as CustomRequest).user);
     next();
   } catch (error) {

@@ -9,6 +9,7 @@ async function main() {
   try {
     // Delete all the data in the database
     await prisma.note.deleteMany();
+    await prisma.session.deleteMany();
     await prisma.user.deleteMany();
     // start seeding the database
     for (let i = 0; i < users.length; i++) {

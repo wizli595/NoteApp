@@ -12,14 +12,18 @@ route
   .route("/")
   .post(validateUser, UserController.authUser)
   .put(validateSession,protect, validateUpdateUser, UserController.updateUser);
-route.route("/loggout").post(validateSession,protect, UserController.logout);
-route
+
+  route.route("/loggout").post(validateSession,protect, UserController.logout);
+  
+  route
   .route("/password")
   .put(validateSession,protect, validatePassword, UserController.changePassword);
-route
+  
+  route
   .route("/sessions")
-  .get(validateSession,protect, UserController.getMysession)
-  .delete(validateSession,protect, UserController.loggoutAllSessions);
-
+  .get(validateSession, protect, UserController.getMysession)
+  .delete(validateSession, protect, UserController.loggoutAllSessions);
+  
+  route.route("/verify").get(UserController.verifyEmail);
 
 export default route;

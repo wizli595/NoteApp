@@ -4,6 +4,9 @@ import { OperationalError } from "../utils/errors/operationalError";
 import prisma from "../../prisma/middleware/prismaMiddleware";
 import env from "../utils/validateEnv";
 import { CustomRequest } from "../middleware/authMiddleware";
+import generateVerificationToken from "../utils/generateRandomToken";
+import sendVerificationEmail from "../utils/sendEmailVerifcation";
+import path from "path";
 
 /**
  * @description Log In
@@ -21,7 +24,6 @@ const authUser: RequestHandler = async (req, res, next) => {
       where: { email, password },
     });
     if (!existingUser) throw new Error("Invalid credintial !!");
-    console.log(existingUser);
     const signedJWT = jwt.sign(
       { id: existingUser.id, email: existingUser.email },
       env.JWT_KEY
@@ -38,10 +40,20 @@ const authUser: RequestHandler = async (req, res, next) => {
         userId: existingUser.id,
       },
     });
+    // generate the token and save it in the user
+    const randomToken = generateVerificationToken();
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: { verifcationToken: randomToken },
+    });
+    if (!existingUser.isVerified) {
+      sendVerificationEmail(existingUser, randomToken,req);
+      throw new Error("Please verify your email and try again");
+    }
 
     return res.status(200).send(existingUser);
-  } catch (error) {
-    next(new OperationalError("Invalid credintial !!", 405));
+  } catch (error: unknown) {
+    next(new OperationalError((error as Error)?.message, 405));
   }
 };
 /**
@@ -172,6 +184,7 @@ const getMysession: RequestHandler = async (req, res, next) => {
     if (!user) {
       throw new Error("User not found");
     }
+    
     const sessions = await prisma.session.findMany({
       where: { userId: user.id },
     });
@@ -216,6 +229,29 @@ const loggoutAllSessions : RequestHandler = async (req, res, next) => {
   }
 };
 
+const verifyEmail: RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const user = await prisma.user.findFirst({
+      where: { verifcationToken: token },
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if(user.verifcationToken !== token){
+      throw new Error("Invalid token");
+    }
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isVerified: true },
+    });
+    const filePath = path.join(__dirname, '../utils/pages', 'email-verification-success.html');
+
+    return res.status(200).sendFile(filePath);
+  } catch (error) {
+    next(new OperationalError("Invalid token", 401));
+  }
+}
 export {
   authUser,
   checkSession,
@@ -223,5 +259,6 @@ export {
   updateUser,
   changePassword,
   getMysession,
-  loggoutAllSessions
+  loggoutAllSessions,
+  verifyEmail,
 };

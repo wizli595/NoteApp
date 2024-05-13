@@ -129,6 +129,8 @@ const deleteNote: RequestHandler = async (req, res, next) => {
 const getMyNotes: RequestHandler = async (req, res, next) => {
   const userId = ((req as CustomRequest)?.user as { id: string })?.id;
   try {
+    // alternative way to get notes
+    // await prisma.user.findUnique({ where: { id: userId } }).notes();
     const notes = await prisma.note.findMany({
       where: { userId },
     });
